@@ -24,7 +24,6 @@ blogsRouter.post('/', async (request, response, next) => {
 /*  const users = await User.find({})
   const user = users[0]       */
 
-
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
     if (!request.token || !decodedToken.id) {
@@ -38,7 +37,8 @@ blogsRouter.post('/', async (request, response, next) => {
       author:body.author,
       url:body.url,
       likes:body.likes === undefined ? 0 : body.likes,
-      user:user._id
+      user:user._id,
+      comments:body.comments === undefined ? [] : body.comments
     })
 
     if (blog.title === undefined && blog.url === undefined) {
@@ -109,11 +109,14 @@ blogsRouter.put('/:id', async (request, response, next) => {
       title:body.title,
       url:body.url,
       author:body.author,
-      likes:body.likes
+      likes:body.likes,
+      comments:body.comments
     }
+    console.log('in Blog Ruter put blog', blog)
 
     const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
     response.json(updatedBlog.toJSON())
+    console.log(response.json(updatedBlog.toJSON()))
   } catch(exception) {
     next(exception)
   }
